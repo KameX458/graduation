@@ -71,14 +71,24 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
+        /* ログ表示（サイズをひと回り大きく調整） */
         #debug-log {
-            position: fixed; bottom: 10px; left: 10px; font-size: 10px;
-            color: #0f0; background: rgba(0,0,0,0.5); pointer-events: none; z-index: 20;
+            position: fixed; 
+            bottom: 15px; 
+            left: 15px; 
+            font-size: 14px; /* 10pxから14pxに拡大 */
+            padding: 8px 12px; /* 余白を追加 */
+            border-radius: 6px;
+            color: #0f0; 
+            background: rgba(0,0,0,0.6); 
+            pointer-events: none; 
+            z-index: 20;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
-    <div id="debug-log">Log: Initializing...</div>
+    <div id="debug-log">ログ：初期化中...</div>
 
     <div id="ui-overlay">
         <div class="header-title">那覇高校 野球部<span>卒部式</span></div>
@@ -115,7 +125,7 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- ターゲット 1 (Index 0) - width=3 に変更 -->
+        <!-- ターゲット 1 (Index 0) - width=3 -->
         <a-entity mindar-image-target="targetIndex: 0" class="ar-target">
             <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
             <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
@@ -149,7 +159,7 @@
 
         function log(msg) {
             console.log(msg);
-            debugLog.innerText = "Log: " + msg;
+            debugLog.innerText = msg;
         }
 
         class TargetSlideshow {
@@ -177,14 +187,14 @@
                 });
 
                 this.targetEl.addEventListener("targetFound", () => {
-                    log("Target Found");
+                    log("ログ：ターゲットを認識しました");
                     statusText.innerText = "コンテンツ再生中...";
                     scanGuide.style.opacity = "0"; // ガイドを隠す
                     this.start();
                 });
 
                 this.targetEl.addEventListener("targetLost", () => {
-                    log("Target Lost");
+                    log("ログ：ターゲットを認識できません");
                     statusText.innerText = "〜 卒部式プログラム（表と裏）をスキャンしてください 〜";
                     scanGuide.style.opacity = "1"; // ガイドを表示
                     this.stop();
@@ -226,13 +236,13 @@
         }
 
         sceneEl.addEventListener("arReady", () => {
-            log("AR Ready");
+            log("ログ：ARの準備が完了しました");
             statusText.innerText = "〜 卒部式プログラム（表と裏）をスキャンしてください 〜";
             document.querySelectorAll('.ar-target').forEach(el => new TargetSlideshow(el));
         });
 
         sceneEl.addEventListener("arError", () => {
-            log("AR Error");
+            log("ログ：ARエラーが発生しました");
             statusText.innerHTML = "<span style='color:red'>カメラエラー</span>";
         });
     </script>
