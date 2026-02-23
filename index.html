@@ -115,13 +115,13 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- ターゲット 1 (Index 0) - width=2 -->
+        <!-- ターゲット 1 (Index 0) - width=3 に変更 -->
         <a-entity mindar-image-target="targetIndex: 0" class="ar-target">
-            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
         </a-entity>
 
         <!-- ターゲット 2 (Index 1) - width=3 -->
@@ -134,8 +134,7 @@
             <a-image src="#img16" class="slideshow-item" position="0 0 0.06" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
             <a-image src="#img17" class="slideshow-item" position="0 0 0.07" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
             <a-image src="#img18" class="slideshow-item" position="0 0 0.08" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-        </a-entity>
+            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-entity>
 
     </a-scene>
 
@@ -186,7 +185,7 @@
 
                 this.targetEl.addEventListener("targetLost", () => {
                     log("Target Lost");
-                    statusText.innerText = "〜 卒部式プログラムをスキャンしてください 〜";
+                    statusText.innerText = "〜 卒部式プログラム（表と裏）をスキャンしてください 〜";
                     scanGuide.style.opacity = "1"; // ガイドを表示
                     this.stop();
                 });
@@ -228,7 +227,7 @@
 
         sceneEl.addEventListener("arReady", () => {
             log("AR Ready");
-            statusText.innerText = "〜 卒部式プログラムをスキャンしてください 〜";
+            statusText.innerText = "〜 卒部式プログラム（表と裏）をスキャンしてください 〜";
             document.querySelectorAll('.ar-target').forEach(el => new TargetSlideshow(el));
         });
 
