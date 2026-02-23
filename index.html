@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Slideshow - Repeat Loop</title>
+    <title>AR Slideshow - Large Repeat Loop</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
@@ -123,26 +123,26 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- ターゲット1: width="2" -->
+        <!-- ターゲット1: width="3" -->
         <a-entity mindar-image-target="targetIndex: 0" class="ar-target">
-            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
         </a-entity>
 
-        <!-- ターゲット2: width="2" -->
+        <!-- ターゲット2: width="3" -->
         <a-entity mindar-image-target="targetIndex: 1" class="ar-target">
-            <a-image src="#img11" class="slideshow-item" position="0 0 0.01" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img12" class="slideshow-item" position="0 0 0.02" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img13" class="slideshow-item" position="0 0 0.03" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img14" class="slideshow-item" position="0 0 0.04" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img15" class="slideshow-item" position="0 0 0.05" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img16" class="slideshow-item" position="0 0 0.06" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img17" class="slideshow-item" position="0 0 0.07" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img18" class="slideshow-item" position="0 0 0.08" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img11" class="slideshow-item" position="0 0 0.01" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img12" class="slideshow-item" position="0 0 0.02" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img13" class="slideshow-item" position="0 0 0.03" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img14" class="slideshow-item" position="0 0 0.04" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img15" class="slideshow-item" position="0 0 0.05" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img16" class="slideshow-item" position="0 0 0.06" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img17" class="slideshow-item" position="0 0 0.07" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img18" class="slideshow-item" position="0 0 0.08" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
         </a-entity>
 
     </a-scene>
@@ -156,7 +156,7 @@
         
         const FADE_DUR = 1200;
         const DISPLAY_DUR = 4000;
-        const BASE_WIDTH = 2; // 幅を2に設定
+        const BASE_WIDTH = 3; // 幅を3に設定
 
         function log(msg) {
             console.log(msg);
@@ -265,7 +265,7 @@
                     const prevSlide = this.slides[this.currentIndex];
                     prevSlide.setAttribute('animation', `property: components.material.material.opacity; from: 1; to: 0; dur: ${FADE_DUR}; easing: easeInOutQuad`);
                     
-                    // インデックスの更新 (剰余演算子により自動的に 0 に戻り、無限ループします)
+                    // インデックスの更新 (無限ループ)
                     this.currentIndex = (this.currentIndex + 1) % this.slides.length;
                     
                     const nextSlide = this.slides[this.currentIndex];
