@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>那覇高校 野球部卒部式</title>
+    <title>那覇高校 野球部</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
@@ -30,12 +30,6 @@
             display: flex;
             align-items: baseline;
             gap: 8px;
-        }
-
-        /* 「卒部式」を小さく表示するためのスタイル */
-        .header-title span {
-            font-size: 14px;
-            font-weight: normal;
         }
 
         /* ステータスメッセージ */
@@ -71,13 +65,13 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* ログ表示（サイズをひと回り大きく調整） */
+        /* ログ表示 */
         #debug-log {
             position: fixed; 
             bottom: 15px; 
             left: 15px; 
-            font-size: 14px; /* 10pxから14pxに拡大 */
-            padding: 8px 12px; /* 余白を追加 */
+            font-size: 14px; 
+            padding: 8px 12px; 
             border-radius: 6px;
             color: #0f0; 
             background: rgba(0,0,0,0.6); 
@@ -91,7 +85,7 @@
     <div id="debug-log">ログ：初期化中...</div>
 
     <div id="ui-overlay">
-        <div class="header-title">那覇高校 野球部<span>卒部式</span></div>
+        <div class="header-title">那覇高校 野球部</div>
         <div id="status-text" class="status-msg">システムを起動中...</div>
         
         <!-- 読み取り枠ガイド -->
@@ -144,7 +138,8 @@
             <a-image src="#img16" class="slideshow-item" position="0 0 0.06" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
             <a-image src="#img17" class="slideshow-item" position="0 0 0.07" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
             <a-image src="#img18" class="slideshow-item" position="0 0 0.08" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-entity>
+            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+        </a-entity>
 
     </a-scene>
 
@@ -189,14 +184,14 @@
                 this.targetEl.addEventListener("targetFound", () => {
                     log("ログ：ターゲットを認識しました");
                     statusText.innerText = "コンテンツ再生中...";
-                    scanGuide.style.opacity = "0"; // ガイドを隠す
+                    scanGuide.style.opacity = "0";
                     this.start();
                 });
 
                 this.targetEl.addEventListener("targetLost", () => {
                     log("ログ：ターゲットを認識できません");
                     statusText.innerText = "〜 卒部式プログラム をスキャンしてください 〜";
-                    scanGuide.style.opacity = "1"; // ガイドを表示
+                    scanGuide.style.opacity = "1";
                     this.stop();
                 });
             }
