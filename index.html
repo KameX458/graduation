@@ -195,7 +195,7 @@
 
                 this.targetEl.addEventListener("targetLost", () => {
                     log("ログ：ターゲットを認識できません");
-                    statusText.innerText = "〜 卒部式プログラム（表と裏）をスキャンしてください 〜";
+                    statusText.innerText = "〜 卒部式プログラム をスキャンしてください 〜";
                     scanGuide.style.opacity = "1"; // ガイドを表示
                     this.stop();
                 });
@@ -237,7 +237,7 @@
 
         sceneEl.addEventListener("arReady", () => {
             log("ログ：ARの準備が完了しました");
-            statusText.innerText = "〜 卒部式プログラム（表と裏）をスキャンしてください 〜";
+            statusText.innerText = "〜 卒部式プログラム をスキャンしてください 〜";
             document.querySelectorAll('.ar-target').forEach(el => new TargetSlideshow(el));
         });
 
