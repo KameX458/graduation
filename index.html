@@ -3,21 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindAR SlideShow - Multi Target Optimized</title>
+    <title>那覇高校 野球部卒部式</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
         body { margin: 0; overflow: hidden; background-color: #000; }
+        
+        /* UI全体のオーバーレイ */
         #ui-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: flex-start; z-index: 10; pointer-events: none;
-            color: white; font-family: sans-serif;
+            z-index: 10; pointer-events: none;
+            color: white; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
         }
+
+        /* ヘッダータイトル */
+        .header-title {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        /* 「卒部式」を小さく表示するためのスタイル */
+        .header-title span {
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        /* ステータスメッセージ */
         .status-msg {
             background: rgba(0, 0, 0, 0.7); padding: 10px 20px;
-            border-radius: 8px; margin-top: 20px; font-size: 14px;
+            border-radius: 8px; margin-top: 15px; font-size: 14px;
         }
+
+        /* 読み取り枠（太枠） */
+        #scan-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            border: 6px solid #fff; /* 太枠 */
+            border-radius: 24px;
+            box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.4); /* 枠以外を暗くする */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s;
+        }
+
+        #scan-guide::before {
+            content: "SCANNING...";
+            font-size: 12px;
+            letter-spacing: 0.2em;
+            color: #fff;
+            position: absolute;
+            bottom: -35px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
         #debug-log {
             position: fixed; bottom: 10px; left: 10px; font-size: 10px;
             color: #0f0; background: rgba(0,0,0,0.5); pointer-events: none; z-index: 20;
@@ -28,7 +81,11 @@
     <div id="debug-log">Log: Initializing...</div>
 
     <div id="ui-overlay">
+        <div class="header-title">那覇高校 野球部<span>卒部式</span></div>
         <div id="status-text" class="status-msg">システムを起動中...</div>
+        
+        <!-- 読み取り枠ガイド -->
+        <div id="scan-guide"></div>
     </div>
 
     <a-scene 
@@ -39,14 +96,12 @@
         device-orientation-permission-ui="enabled: false">
         
         <a-assets>
-            <!-- ターゲット1用画像 (5枚) -->
             <img id="img01" src="view_01.jpg">
             <img id="img02" src="view_02.jpg">
             <img id="img03" src="view_03.jpg">
             <img id="img04" src="view_04.jpg">
             <img id="img05" src="view_05.jpg">
 
-            <!-- ターゲット2用画像 (9枚) -->
             <img id="img11" src="view_11.jpg">
             <img id="img12" src="view_12.jpg">
             <img id="img13" src="view_13.jpg">
@@ -60,7 +115,7 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- ターゲット 1 (Index 0) - width=2 に変更 -->
+        <!-- ターゲット 1 (Index 0) - width=2 -->
         <a-entity mindar-image-target="targetIndex: 0" class="ar-target">
             <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
             <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
@@ -87,6 +142,7 @@
     <script>
         const statusText = document.getElementById('status-text');
         const debugLog = document.getElementById('debug-log');
+        const scanGuide = document.getElementById('scan-guide');
         const sceneEl = document.querySelector('a-scene');
         
         const FADE_DUR = 1200;
@@ -112,10 +168,8 @@
                     const imgAsset = document.querySelector(src);
                     
                     const setSize = () => {
-                        // 要素に設定されているwidthを数値として取得
                         const currentWidth = parseFloat(imgEntity.getAttribute('width')) || 1.0;
                         const ratio = imgAsset.naturalHeight / imgAsset.naturalWidth;
-                        // 設定されたwidthに基づきheightを計算
                         imgEntity.setAttribute('height', currentWidth * ratio);
                     };
 
@@ -125,13 +179,15 @@
 
                 this.targetEl.addEventListener("targetFound", () => {
                     log("Target Found");
-                    statusText.style.display = "none";
+                    statusText.innerText = "コンテンツ再生中...";
+                    scanGuide.style.opacity = "0"; // ガイドを隠す
                     this.start();
                 });
 
                 this.targetEl.addEventListener("targetLost", () => {
                     log("Target Lost");
-                    statusText.style.display = "block";
+                    statusText.innerText = "マーカーをスキャンしてください";
+                    scanGuide.style.opacity = "1"; // ガイドを表示
                     this.stop();
                 });
             }
@@ -149,15 +205,11 @@
 
             start() {
                 if (this.slideInterval) return;
-                
                 this.fade(this.slides[this.currentIndex], 0, 1);
-                
                 this.slideInterval = setInterval(() => {
                     const prevSlide = this.slides[this.currentIndex];
                     this.fade(prevSlide, 1, 0);
-
                     this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-
                     const nextSlide = this.slides[this.currentIndex];
                     this.fade(nextSlide, 0, 1);
                 }, DISPLAY_DUR);
