@@ -3,50 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindAR SlideShow - Multi Target</title>
+    <title>AR Slideshow - Intuitive Scan</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #000; }
+        :root {
+            --primary-color: #00f2ff;
+        }
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        
+        /* メインUIレイヤー */
         #ui-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: flex-start; z-index: 10; pointer-events: none;
-            color: white; font-family: sans-serif;
+            z-index: 10; pointer-events: none; color: white;
         }
-        .status-msg {
-            background: rgba(0, 0, 0, 0.7); padding: 10px 20px;
-            border-radius: 8px; margin-top: 20px; font-size: 14px;
+
+        /* ステータスバナー */
+        .status-header {
+            width: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px);
+            padding: 20px 0; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);
         }
+        #status-text { font-size: 18px; font-weight: bold; letter-spacing: 0.05em; }
+
+        /* スキャン用ガイド枠 */
+        #scan-guide {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px; height: 280px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.3s;
+        }
+        .corner {
+            position: absolute; width: 30px; height: 30px;
+            border: 4px solid var(--primary-color);
+        }
+        .top-left { top: -5px; left: -5px; border-right: 0; border-bottom: 0; border-top-left-radius: 15px; }
+        .top-right { top: -5px; right: -5px; border-left: 0; border-bottom: 0; border-top-right-radius: 15px; }
+        .bottom-left { bottom: -5px; left: -5px; border-right: 0; border-top: 0; border-bottom-left-radius: 15px; }
+        .bottom-right { bottom: -5px; right: -5px; border-left: 0; border-top: 0; border-bottom-right-radius: 15px; }
+
+        .scan-line {
+            position: absolute; width: 100%; height: 2px;
+            background: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color);
+            top: 0; left: 0;
+            animation: scanMove 3s infinite ease-in-out;
+        }
+        @keyframes scanMove {
+            0%, 100% { top: 5%; opacity: 0.2; }
+            50% { top: 95%; opacity: 1; }
+        }
+
+        .hint-box {
+            position: absolute; bottom: 80px;
+            background: rgba(0,0,0,0.7); padding: 12px 24px;
+            border-radius: 30px; font-size: 14px; color: #ddd;
+            display: flex; align-items: center; gap: 8px;
+        }
+
         #debug-log {
-            position: fixed; bottom: 10px; left: 10px; font-size: 10px;
-            color: #0f0; background: rgba(0,0,0,0.5); pointer-events: none; z-index: 20;
+            position: fixed; bottom: 10px; left: 10px; font-size: 9px;
+            color: rgba(255,255,255,0.3); z-index: 20;
         }
+
+        .hidden { opacity: 0 !important; visibility: hidden; }
     </style>
 </head>
 <body>
-    <div id="debug-log">Log: Initializing...</div>
+    <div id="debug-log">System Initializing...</div>
 
     <div id="ui-overlay">
-        <div id="status-text" class="status-msg">システムを起動中...</div>
+        <div class="status-header">
+            <div id="status-text">読み込み中...</div>
+        </div>
+
+        <div id="scan-guide" class="hidden">
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+            <div class="scan-line"></div>
+        </div>
+
+        <div id="hint-text" class="hint-box hidden">
+            <span>💡 マーカーを枠内に収めてください</span>
+        </div>
     </div>
 
+    <!-- mindar-imageのimageTargetSrcを空にし、後でJSから設定 -->
     <a-scene 
-        mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.00001; filterBeta: 0.001; missTolerance: 5;" 
+        id="ar-scene"
+        mindar-image="autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.01; missTolerance: 5;" 
         color-space="sRGB" 
         renderer="colorManagement: true, physicallyCorrectLights" 
         vr-mode-ui="enabled: false" 
         device-orientation-permission-ui="enabled: false">
         
         <a-assets>
-            <!-- ターゲット1用画像 (view_01 - 05) -->
+            <!-- Target 1 Images -->
             <img id="img01" src="view_01.jpg">
             <img id="img02" src="view_02.jpg">
             <img id="img03" src="view_03.jpg">
             <img id="img04" src="view_04.jpg">
             <img id="img05" src="view_05.jpg">
 
-            <!-- ターゲット2用画像 (view_11 - 19) -->
+            <!-- Target 2 Images -->
             <img id="img11" src="view_11.jpg">
             <img id="img12" src="view_12.jpg">
             <img id="img13" src="view_13.jpg">
@@ -60,26 +124,24 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- ターゲット 1 (Index 0) - 5枚のスライド -->
         <a-entity mindar-image-target="targetIndex: 0" class="ar-target">
-            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
         </a-entity>
 
-        <!-- ターゲット 2 (Index 1) - 9枚のスライド -->
         <a-entity mindar-image-target="targetIndex: 1" class="ar-target">
-            <a-image src="#img11" class="slideshow-item" position="0 0 0.01" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img12" class="slideshow-item" position="0 0 0.02" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img13" class="slideshow-item" position="0 0 0.03" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img14" class="slideshow-item" position="0 0 0.04" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img15" class="slideshow-item" position="0 0 0.05" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img16" class="slideshow-item" position="0 0 0.06" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img17" class="slideshow-item" position="0 0 0.07" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img18" class="slideshow-item" position="0 0 0.08" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img11" class="slideshow-item" position="0 0 0.01" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img12" class="slideshow-item" position="0 0 0.02" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img13" class="slideshow-item" position="0 0 0.03" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img14" class="slideshow-item" position="0 0 0.04" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img15" class="slideshow-item" position="0 0 0.05" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img16" class="slideshow-item" position="0 0 0.06" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img17" class="slideshow-item" position="0 0 0.07" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img18" class="slideshow-item" position="0 0 0.08" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img19" class="slideshow-item" position="0 0 0.09" width="1.1" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
         </a-entity>
 
     </a-scene>
@@ -87,18 +149,28 @@
     <script>
         const statusText = document.getElementById('status-text');
         const debugLog = document.getElementById('debug-log');
+        const scanGuide = document.getElementById('scan-guide');
+        const hintBox = document.getElementById('hint-text');
         const sceneEl = document.querySelector('a-scene');
         
-        // 設定値
         const FADE_DUR = 1200;
-        const DISPLAY_DUR = 3500;
+        const DISPLAY_DUR = 4000;
 
         function log(msg) {
             console.log(msg);
             debugLog.innerText = "Log: " + msg;
         }
 
-        // 各ターゲットの状態を管理するクラス
+        // パス解決の修正: 絶対パスを作成して MindAR を初期化
+        function initTargetSrc() {
+            // 現在のページの URL から絶対パスを作成
+            const targetPath = new URL('targets.mind', window.location.href).href;
+            log("Target path resolved to: " + targetPath);
+            sceneEl.setAttribute('mindar-image', {
+                imageTargetSrc: targetPath
+            });
+        }
+
         class TargetSlideshow {
             constructor(targetEl) {
                 this.targetEl = targetEl;
@@ -109,12 +181,11 @@
             }
 
             init() {
-                // アスペクト比調整
                 this.slides.forEach((imgEntity) => {
                     const src = imgEntity.getAttribute('src');
                     const imgAsset = document.querySelector(src);
                     const setSize = () => {
-                        const baseWidth = 1.0; 
+                        const baseWidth = 1.1; 
                         const ratio = imgAsset.naturalHeight / imgAsset.naturalWidth;
                         imgEntity.setAttribute('height', baseWidth * ratio);
                     };
@@ -122,33 +193,39 @@
                     else imgAsset.addEventListener('load', setSize);
                 });
 
-                // イベント登録
                 this.targetEl.addEventListener("targetFound", () => {
-                    const targetIdx = this.targetEl.getAttribute('mindar-image-target').split(':')[1];
-                    log(`Target Found: Index ${targetIdx}`);
-                    statusText.style.display = "none";
+                    log(`Target Detected`);
+                    this.toggleUI(false);
                     this.start();
                 });
 
                 this.targetEl.addEventListener("targetLost", () => {
                     log("Target Lost");
-                    statusText.style.display = "block";
+                    this.toggleUI(true);
                     this.stop();
                 });
             }
 
+            toggleUI(show) {
+                if (show) {
+                    statusText.innerText = "マーカーをスキャン中...";
+                    scanGuide.classList.remove('hidden');
+                    hintBox.classList.remove('hidden');
+                } else {
+                    statusText.innerText = "認識成功！";
+                    scanGuide.classList.add('hidden');
+                    hintBox.classList.add('hidden');
+                }
+            }
+
             start() {
                 if (this.slideInterval) return;
-                
-                // 最初の1枚を表示
                 this.slides[this.currentIndex].setAttribute('animation', `property: components.material.material.opacity; from: 0; to: 1; dur: ${FADE_DUR}; easing: easeInOutQuad`);
                 
                 this.slideInterval = setInterval(() => {
                     const prevSlide = this.slides[this.currentIndex];
                     prevSlide.setAttribute('animation', `property: components.material.material.opacity; from: 1; to: 0; dur: ${FADE_DUR}; easing: easeInOutQuad`);
-
                     this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-
                     const nextSlide = this.slides[this.currentIndex];
                     nextSlide.setAttribute('animation', `property: components.material.material.opacity; from: 0; to: 1; dur: ${FADE_DUR}; easing: easeInOutQuad`);
                 }, DISPLAY_DUR);
@@ -165,19 +242,22 @@
             }
         }
 
-        // シーン準備完了後の処理
+        // シーン初期化前にターゲットパスを設定
+        initTargetSrc();
+
         sceneEl.addEventListener("arReady", () => {
             log("AR Ready");
             statusText.innerText = "マーカーをスキャンしてください";
+            scanGuide.classList.remove('hidden');
+            hintBox.classList.remove('hidden');
             
-            // 全てのターゲットエンティティに対してスライドショーを初期化
             const targetEntities = document.querySelectorAll('.ar-target');
             targetEntities.forEach(el => new TargetSlideshow(el));
         });
 
-        sceneEl.addEventListener("arError", () => {
-            log("AR Error");
-            statusText.innerHTML = "<span style='color:red'>カメラエラーが発生しました</span>";
+        sceneEl.addEventListener("arError", (event) => {
+            log("AR Error: " + event.detail.error);
+            statusText.innerHTML = "<span style='color:#ff4444'>カメラまたはマーカー読み込みエラー</span>";
         });
     </script>
 </body>
