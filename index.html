@@ -3,113 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Slideshow - Large Repeat Loop</title>
+    <title>MindAR SlideShow - Multi Target Optimized</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-        :root {
-            --primary-color: #00f2ff;
-        }
-        body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Helvetica Neue', Arial, sans-serif; }
-        
-        /* メインUIレイヤー */
+        body { margin: 0; overflow: hidden; background-color: #000; }
         #ui-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center;
-            z-index: 10; pointer-events: none; color: white;
+            justify-content: flex-start; z-index: 10; pointer-events: none;
+            color: white; font-family: sans-serif;
         }
-
-        /* ステータスバナー */
-        .status-header {
-            width: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px);
-            padding: 20px 0; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+        .status-msg {
+            background: rgba(0, 0, 0, 0.7); padding: 10px 20px;
+            border-radius: 8px; margin-top: 20px; font-size: 14px;
         }
-        #status-text { font-size: 18px; font-weight: bold; letter-spacing: 0.05em; }
-
-        /* スキャン用ガイド枠（縦長：240x360） */
-        #scan-guide {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 240px; height: 360px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.3s;
-        }
-        .corner {
-            position: absolute; width: 30px; height: 30px;
-            border: 4px solid var(--primary-color);
-        }
-        .top-left { top: -5px; left: -5px; border-right: 0; border-bottom: 0; border-top-left-radius: 15px; }
-        .top-right { top: -5px; right: -5px; border-left: 0; border-bottom: 0; border-top-right-radius: 15px; }
-        .bottom-left { bottom: -5px; left: -5px; border-right: 0; border-top: 0; border-bottom-left-radius: 15px; }
-        .bottom-right { bottom: -5px; right: -5px; border-left: 0; border-top: 0; border-bottom-right-radius: 15px; }
-
-        .scan-line {
-            position: absolute; width: 100%; height: 2px;
-            background: var(--primary-color);
-            box-shadow: 0 0 15px var(--primary-color);
-            top: 0; left: 0;
-            animation: scanMove 3s infinite ease-in-out;
-        }
-        @keyframes scanMove {
-            0%, 100% { top: 5%; opacity: 0.2; }
-            50% { top: 95%; opacity: 1; }
-        }
-
-        .hint-box {
-            position: absolute; bottom: 80px;
-            background: rgba(0,0,0,0.7); padding: 12px 24px;
-            border-radius: 30px; font-size: 14px; color: #ddd;
-            display: flex; align-items: center; gap: 8px;
-        }
-
         #debug-log {
-            position: fixed; bottom: 10px; left: 10px; font-size: 9px;
-            color: rgba(255,255,255,0.3); z-index: 20;
+            position: fixed; bottom: 10px; left: 10px; font-size: 10px;
+            color: #0f0; background: rgba(0,0,0,0.5); pointer-events: none; z-index: 20;
         }
-
-        .hidden { opacity: 0 !important; visibility: hidden; }
     </style>
 </head>
 <body>
-    <div id="debug-log">System Initializing...</div>
+    <div id="debug-log">Log: Initializing...</div>
 
     <div id="ui-overlay">
-        <div class="status-header">
-            <div id="status-text">準備中...</div>
-        </div>
-
-        <div id="scan-guide" class="hidden">
-            <div class="corner top-left"></div>
-            <div class="corner top-right"></div>
-            <div class="corner bottom-left"></div>
-            <div class="corner bottom-right"></div>
-            <div class="scan-line"></div>
-        </div>
-
-        <div id="hint-text" class="hint-box hidden">
-            <span>💡 ターゲットを枠内に収めてください</span>
-        </div>
+        <div id="status-text" class="status-msg">システムを起動中...</div>
     </div>
 
     <a-scene 
-        id="ar-scene"
-        mindar-image="autoStart: false; uiLoading: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.01; missTolerance: 5;" 
+        mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.00001; filterBeta: 0.001; missTolerance: 5;" 
         color-space="sRGB" 
         renderer="colorManagement: true, physicallyCorrectLights" 
         vr-mode-ui="enabled: false" 
         device-orientation-permission-ui="enabled: false">
         
         <a-assets>
-            <!-- ターゲット1用画像 (view_01 - 05) -->
+            <!-- ターゲット1用画像 (5枚) -->
             <img id="img01" src="view_01.jpg">
             <img id="img02" src="view_02.jpg">
             <img id="img03" src="view_03.jpg">
             <img id="img04" src="view_04.jpg">
             <img id="img05" src="view_05.jpg">
 
-            <!-- ターゲット2用画像 (view_11 - 19) -->
+            <!-- ターゲット2用画像 (9枚) -->
             <img id="img11" src="view_11.jpg">
             <img id="img12" src="view_12.jpg">
             <img id="img13" src="view_13.jpg">
@@ -123,16 +60,16 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- ターゲット1: width="3" -->
+        <!-- ターゲット 1 (Index 0) - width=2 に変更 -->
         <a-entity mindar-image-target="targetIndex: 0" class="ar-target">
-            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
-            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img01" class="slideshow-item" position="0 0 0.01" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img02" class="slideshow-item" position="0 0 0.02" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img03" class="slideshow-item" position="0 0 0.03" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img04" class="slideshow-item" position="0 0 0.04" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
+            <a-image src="#img05" class="slideshow-item" position="0 0 0.05" width="2" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
         </a-entity>
 
-        <!-- ターゲット2: width="3" -->
+        <!-- ターゲット 2 (Index 1) - width=3 -->
         <a-entity mindar-image-target="targetIndex: 1" class="ar-target">
             <a-image src="#img11" class="slideshow-item" position="0 0 0.01" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
             <a-image src="#img12" class="slideshow-item" position="0 0 0.02" width="3" transparent="true" opacity="0" material="shader: flat; depthTest: false"></a-image>
@@ -150,62 +87,14 @@
     <script>
         const statusText = document.getElementById('status-text');
         const debugLog = document.getElementById('debug-log');
-        const scanGuide = document.getElementById('scan-guide');
-        const hintBox = document.getElementById('hint-text');
         const sceneEl = document.querySelector('a-scene');
         
         const FADE_DUR = 1200;
-        const DISPLAY_DUR = 4000;
-        const BASE_WIDTH = 3; // 幅を3に設定
+        const DISPLAY_DUR = 3500;
 
         function log(msg) {
             console.log(msg);
             debugLog.innerText = "Log: " + msg;
-        }
-
-        /**
-         * プレビュー環境（blob URLなど）でも動作する絶対URLの解決
-         */
-        function getResolvedPath(fileName) {
-            try {
-                const base = document.baseURI || window.location.href;
-                const url = new URL(fileName, base);
-                
-                if (url.protocol === 'blob:') {
-                    const origin = window.location.origin;
-                    const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                    return origin + path + fileName;
-                }
-                
-                return url.href;
-            } catch (e) {
-                log("Path resolution failed: " + e.message);
-                return fileName;
-            }
-        }
-
-        /**
-         * ARエンジンの起動
-         */
-        function bootAR() {
-            const targetPath = getResolvedPath('targets.mind');
-            log("Booting with: " + targetPath);
-
-            sceneEl.setAttribute('mindar-image', 'imageTargetSrc', targetPath);
-            sceneEl.setAttribute('mindar-image', 'autoStart', 'true');
-
-            const startSystem = () => {
-                const system = sceneEl.systems['mindar-image-system'];
-                if (system) {
-                    log("System start triggered");
-                    system.start();
-                } else {
-                    setTimeout(startSystem, 100);
-                }
-            };
-
-            if (sceneEl.hasLoaded) startSystem();
-            else sceneEl.addEventListener('loaded', startSystem);
         }
 
         class TargetSlideshow {
@@ -221,55 +110,56 @@
                 this.slides.forEach((imgEntity) => {
                     const src = imgEntity.getAttribute('src');
                     const imgAsset = document.querySelector(src);
+                    
                     const setSize = () => {
-                        if (!imgAsset.naturalWidth) return;
+                        // 要素に設定されているwidthを数値として取得
+                        const currentWidth = parseFloat(imgEntity.getAttribute('width')) || 1.0;
                         const ratio = imgAsset.naturalHeight / imgAsset.naturalWidth;
-                        imgEntity.setAttribute('height', BASE_WIDTH * ratio);
+                        // 設定されたwidthに基づきheightを計算
+                        imgEntity.setAttribute('height', currentWidth * ratio);
                     };
+
                     if (imgAsset.complete) setSize();
                     else imgAsset.addEventListener('load', setSize);
                 });
 
                 this.targetEl.addEventListener("targetFound", () => {
-                    log(`Target Detected`);
-                    this.toggleUI(false);
+                    log("Target Found");
+                    statusText.style.display = "none";
                     this.start();
                 });
 
                 this.targetEl.addEventListener("targetLost", () => {
                     log("Target Lost");
-                    this.toggleUI(true);
+                    statusText.style.display = "block";
                     this.stop();
                 });
             }
 
-            toggleUI(show) {
-                if (show) {
-                    statusText.innerText = "マーカーをスキャン中...";
-                    scanGuide.classList.remove('hidden');
-                    hintBox.classList.remove('hidden');
-                } else {
-                    statusText.innerText = "認識成功！表示中...";
-                    scanGuide.classList.add('hidden');
-                    hintBox.classList.add('hidden');
-                }
+            fade(element, from, to) {
+                element.removeAttribute('animation');
+                element.setAttribute('animation', {
+                    property: 'material.opacity',
+                    from: from,
+                    to: to,
+                    dur: FADE_DUR,
+                    easing: 'easeInOutQuad'
+                });
             }
 
             start() {
                 if (this.slideInterval) return;
                 
-                // 初回表示
-                this.slides[this.currentIndex].setAttribute('animation', `property: components.material.material.opacity; from: 0; to: 1; dur: ${FADE_DUR}; easing: easeInOutQuad`);
+                this.fade(this.slides[this.currentIndex], 0, 1);
                 
                 this.slideInterval = setInterval(() => {
                     const prevSlide = this.slides[this.currentIndex];
-                    prevSlide.setAttribute('animation', `property: components.material.material.opacity; from: 1; to: 0; dur: ${FADE_DUR}; easing: easeInOutQuad`);
-                    
-                    // インデックスの更新 (無限ループ)
+                    this.fade(prevSlide, 1, 0);
+
                     this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-                    
+
                     const nextSlide = this.slides[this.currentIndex];
-                    nextSlide.setAttribute('animation', `property: components.material.material.opacity; from: 0; to: 1; dur: ${FADE_DUR}; easing: easeInOutQuad`);
+                    this.fade(nextSlide, 0, 1);
                 }, DISPLAY_DUR);
             }
 
@@ -284,20 +174,15 @@
             }
         }
 
-        bootAR();
-
         sceneEl.addEventListener("arReady", () => {
             log("AR Ready");
             statusText.innerText = "マーカーをスキャンしてください";
-            scanGuide.classList.remove('hidden');
-            hintBox.classList.remove('hidden');
-            const targetEntities = document.querySelectorAll('.ar-target');
-            targetEntities.forEach(el => new TargetSlideshow(el));
+            document.querySelectorAll('.ar-target').forEach(el => new TargetSlideshow(el));
         });
 
-        sceneEl.addEventListener("arError", (event) => {
-            log("AR Error: " + (event.detail.error || "Unknown"));
-            statusText.innerHTML = "<span style='color:#ff4444'>起動エラーが発生しました</span>";
+        sceneEl.addEventListener("arError", () => {
+            log("AR Error");
+            statusText.innerHTML = "<span style='color:red'>カメラエラー</span>";
         });
     </script>
 </body>
